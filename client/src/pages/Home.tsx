@@ -1,83 +1,111 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import HeroSection from "@/components/HeroSection";
 import MatchCard from "@/components/MatchCard";
 import MatchFilters from "@/components/MatchFilters";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-import { Bell, Settings } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { Bell, Settings, RefreshCw } from "lucide-react";
+import { queryClient } from "@/lib/queryClient";
+
+interface Match {
+  matchId: string;
+  team1: string;
+  team2: string;
+  team1Score: number;
+  team1Wickets: number;
+  team1Overs: number;
+  team2Score?: number;
+  team2Wickets?: number;
+  team2Overs?: number;
+  status: 'live' | 'upcoming' | 'completed';
+  venue: string;
+  time: string;
+  format: 'ODI' | 'T20' | 'Test';
+}
 
 export default function Home() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'upcoming' | 'completed'>('all');
   const [activeFormat, setActiveFormat] = useState<'all' | 'ODI' | 'T20' | 'Test'>('all');
+  const { toast } = useToast();
 
-  // todo: remove mock functionality - replace with real API data
-  const mockMatches = [
-    {
-      matchId: "match-1",
-      team1: "India",
-      team2: "Australia",
-      team1Score: 287,
-      team1Wickets: 4,
-      team1Overs: 45.2,
-      team2Score: 156,
-      team2Wickets: 8,
-      team2Overs: 32.4,
-      status: 'live' as const,
-      venue: "Melbourne Cricket Ground",
-      time: "2:30 PM IST",
-      format: 'ODI' as const,
-    },
-    {
-      matchId: "match-2",
-      team1: "England",
-      team2: "New Zealand",
-      team1Score: 0,
-      team1Wickets: 0,
-      team1Overs: 0,
-      status: 'upcoming' as const,
-      venue: "Lord's",
-      time: "Tomorrow, 10:30 AM",
-      format: 'T20' as const,
-    },
-    {
-      matchId: "match-3",
-      team1: "Pakistan",
-      team2: "South Africa",
-      team1Score: 245,
-      team1Wickets: 10,
-      team1Overs: 48.3,
-      team2Score: 248,
-      team2Wickets: 6,
-      team2Overs: 47.2,
-      status: 'completed' as const,
-      venue: "Wanderers Stadium",
-      time: "Yesterday, 2:00 PM",
-      format: 'ODI' as const,
-    }
-  ];
+  // Fetch matches from API with auto-refresh for live matches
+  const { 
+    data: matches, 
+    isLoading, 
+    error, 
+    refetch,
+    isFetching 
+  } = useQuery<Match[]>({
+    queryKey: [`/api/matches?filter=${activeFilter}`],
+    refetchInterval: activeFilter === 'live' ? 15000 : false, // Auto-refresh every 15s for live matches
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+    retry: 1,
+  });
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    console.log('Refreshing all match data...'); // todo: remove mock functionality
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsRefreshing(false);
+    try {
+      await refetch();
+      toast({
+        title: "Matches refreshed",
+        description: "Latest cricket scores updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Refresh failed", 
+        description: "Unable to fetch latest scores. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const [, setLocation] = useLocation();
 
   const handleMatchClick = (matchId: string) => {
-    console.log(`Navigating to match details: ${matchId}`); // todo: remove mock functionality
     setLocation(`/match/${matchId}`);
   };
 
-  const filteredMatches = mockMatches.filter(match => {
+  const filteredMatches = (matches || []).filter(match => {
     if (activeFilter !== 'all' && match.status !== activeFilter) return false;
     if (activeFormat !== 'all' && match.format !== activeFormat) return false;
     return true;
   });
+
+  // Loading skeleton component
+  const MatchSkeleton = () => (
+    <div className="space-y-4">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="p-6 border rounded-lg">
+          <div className="flex items-center justify-between mb-4">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-6 w-16" />
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-5 w-32" />
+            </div>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-24" />
+              <Skeleton className="h-5 w-32" />
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-4">
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-4 w-20" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,44 +157,76 @@ export default function Home() {
           {/* Main content */}
           <div className="lg:col-span-3">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">
-                {activeFilter === 'all' ? 'All Matches' : 
-                 activeFilter === 'live' ? 'Live Matches' :
-                 activeFilter === 'upcoming' ? 'Upcoming Matches' :
-                 'Completed Matches'}
-              </h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-semibold">
+                  {activeFilter === 'all' ? 'All Matches' : 
+                   activeFilter === 'live' ? 'Live Matches' :
+                   activeFilter === 'upcoming' ? 'Upcoming Matches' :
+                   'Completed Matches'}
+                </h2>
+                {isFetching && (
+                  <RefreshCw className="w-4 h-4 animate-spin text-muted-foreground" />
+                )}
+              </div>
               <div className="text-sm text-muted-foreground">
-                {filteredMatches.length} match{filteredMatches.length !== 1 ? 'es' : ''}
+                {isLoading ? 'Loading...' : `${filteredMatches.length} match${filteredMatches.length !== 1 ? 'es' : ''}`}
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              {filteredMatches.map((match) => (
-                <MatchCard
-                  key={match.matchId}
-                  {...match}
-                  onMatchClick={handleMatchClick}
-                />
-              ))}
-            </div>
-
-            {filteredMatches.length === 0 && (
+            {isLoading ? (
+              <MatchSkeleton />
+            ) : error ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">
-                  No matches found for the selected filters.
+                <p className="text-muted-foreground text-lg mb-4">
+                  Unable to load matches. Please check your connection.
                 </p>
                 <Button 
                   variant="outline" 
-                  onClick={() => {
-                    setActiveFilter('all');
-                    setActiveFormat('all');
-                  }}
-                  className="mt-4"
-                  data-testid="button-clear-filters"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  data-testid="button-retry"
                 >
-                  Clear Filters
+                  {isRefreshing ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Retrying...
+                    </>
+                  ) : (
+                    'Retry'
+                  )}
                 </Button>
               </div>
+            ) : (
+              <>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {filteredMatches.map((match) => (
+                    <MatchCard
+                      key={match.matchId}
+                      {...match}
+                      onMatchClick={handleMatchClick}
+                    />
+                  ))}
+                </div>
+
+                {filteredMatches.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground text-lg">
+                      No matches found for the selected filters.
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setActiveFilter('all');
+                        setActiveFormat('all');
+                      }}
+                      className="mt-4"
+                      data-testid="button-clear-filters"
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -175,7 +235,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t mt-12">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          <p>© 2024 Crick-Vault. Real-time cricket scores and updates.</p>
+          <p>© 2024 CrickVault. Real-time cricket scores and updates.</p>
         </div>
       </footer>
     </div>
