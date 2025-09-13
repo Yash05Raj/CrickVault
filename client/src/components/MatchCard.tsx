@@ -54,7 +54,7 @@ export default function MatchCard({
 
   return (
     <Card 
-      className="hover-elevate cursor-pointer transition-all"
+      className="hover-elevate cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-cricket-green/10 border-l-4 border-l-cricket-green/20 hover:border-l-cricket-green"
       onClick={handleClick}
       data-testid={`card-match-${matchId}`}
     >
@@ -73,26 +73,26 @@ export default function MatchCard({
       
       <CardContent className="space-y-3">
         <div className="space-y-2">
-          <div className="flex items-center justify-between p-3 rounded-md bg-muted/30">
-            <span className="font-semibold">{team1}</span>
-            <span className="font-mono font-bold">
-              {team1Score}/{team1Wickets} <span className="text-xs text-muted-foreground">({team1Overs})</span>
+          <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/20 to-muted/40 border border-muted/20">
+            <span className="font-semibold text-foreground">{team1}</span>
+            <span className="font-mono font-bold text-lg">
+              {team1Score}/{team1Wickets} <span className="text-sm text-muted-foreground">({team1Overs})</span>
             </span>
           </div>
           
           {team2Score !== undefined && (
-            <div className="flex items-center justify-between p-3 rounded-md bg-muted/30">
-              <span className="font-semibold">{team2}</span>
-              <span className="font-mono font-bold">
-                {team2Score}/{team2Wickets} <span className="text-xs text-muted-foreground">({team2Overs})</span>
+            <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/20 to-muted/40 border border-muted/20">
+              <span className="font-semibold text-foreground">{team2}</span>
+              <span className="font-mono font-bold text-lg">
+                {team2Score}/{team2Wickets} <span className="text-sm text-muted-foreground">({team2Overs})</span>
               </span>
             </div>
           )}
           
           {team2Score === undefined && (
-            <div className="flex items-center justify-between p-3 rounded-md bg-muted/30">
-              <span className="font-semibold">{team2}</span>
-              <span className="text-sm text-muted-foreground">Yet to bat</span>
+            <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/20 to-muted/40 border border-muted/20">
+              <span className="font-semibold text-foreground">{team2}</span>
+              <span className="text-sm text-muted-foreground font-medium">Yet to bat</span>
             </div>
           )}
         </div>

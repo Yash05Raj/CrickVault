@@ -14,22 +14,29 @@ export default function ScoreDisplay({
   isWinning = false 
 }: ScoreDisplayProps) {
   return (
-    <div className={`flex items-center justify-between p-4 rounded-md border ${
-      isWinning ? 'bg-cricket-gold/10 border-cricket-gold/20' : 'bg-card'
+    <div className={`flex items-center justify-between p-6 rounded-xl border transition-all duration-300 ${
+      isWinning 
+        ? 'bg-gradient-to-r from-cricket-gold/20 via-cricket-gold/10 to-cricket-gold/5 border-cricket-gold/30 shadow-lg shadow-cricket-gold/10' 
+        : 'bg-gradient-to-r from-card to-card/80 border hover:shadow-md'
     }`} data-testid={`score-${team.toLowerCase()}`}>
-      <div className="space-y-1">
-        <h3 className={`font-semibold text-lg ${isWinning ? 'text-cricket-gold' : ''}`}>
+      <div className="space-y-2">
+        <h3 className={`font-bold text-xl ${isWinning ? 'text-cricket-gold' : 'text-foreground'}`}>
           {team}
+          {isWinning && (
+            <span className="ml-2 inline-flex items-center">
+              <div className="w-2 h-2 bg-cricket-gold rounded-full animate-pulse"></div>
+            </span>
+          )}
         </h3>
-        <div className="text-sm text-muted-foreground">
-          {overs} overs
+        <div className="text-sm text-muted-foreground font-medium">
+          {overs} overs completed
         </div>
       </div>
-      <div className="text-right">
-        <div className="font-mono text-2xl font-bold">
+      <div className="text-right space-y-1">
+        <div className={`font-mono text-3xl font-bold ${isWinning ? 'text-cricket-gold' : 'text-foreground'}`}>
           {score}/{wickets}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-sm text-muted-foreground font-medium">
           ({overs.toFixed(1)} ov)
         </div>
       </div>

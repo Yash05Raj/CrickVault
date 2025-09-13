@@ -40,10 +40,12 @@ export default function MatchFilters({
   };
 
   return (
-    <div className="space-y-4" data-testid="match-filters">
-      <div className="flex items-center gap-2">
-        <Filter className="w-5 h-5 text-muted-foreground" />
-        <h3 className="font-semibold">Filter Matches</h3>
+    <div className="space-y-6 p-6 bg-gradient-to-b from-card to-card/80 rounded-xl border shadow-sm" data-testid="match-filters">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 bg-gradient-to-r from-cricket-green to-emerald-600 rounded-lg flex items-center justify-center">
+          <Filter className="w-4 h-4 text-white" />
+        </div>
+        <h3 className="font-bold text-lg bg-gradient-to-r from-cricket-green to-emerald-600 bg-clip-text text-transparent">Filter Matches</h3>
       </div>
       
       <div className="space-y-3">

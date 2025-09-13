@@ -110,7 +110,7 @@ export default function MatchDetails({ matchId = "match-1", onBack }: MatchDetai
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-xl font-semibold">
+                <h1 className="text-xl font-semibold bg-gradient-to-r from-cricket-green to-emerald-600 bg-clip-text text-transparent">
                   {mockMatch.team1} vs {mockMatch.team2}
                 </h1>
                 <p className="text-sm text-muted-foreground">

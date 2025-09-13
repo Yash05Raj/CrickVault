@@ -31,21 +31,24 @@ export default function PlayerStats({ players, title, type }: PlayerStatsProps) 
           {players.map((player) => (
             <div 
               key={player.id} 
-              className="flex items-center justify-between p-3 rounded-md bg-muted/30"
+              className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-muted/20 to-muted/40 border border-muted/20 hover:shadow-md transition-all duration-200"
               data-testid={`player-${player.id}`}
             >
               <div className="flex items-center gap-3">
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="text-xs">
+                <Avatar className="w-10 h-10 shadow-sm">
+                  <AvatarFallback className={`text-sm font-semibold ${player.isOut ? 'bg-destructive/20 text-destructive' : 'bg-cricket-green/20 text-cricket-green'}`}>
                     {player.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className={`font-medium ${player.isOut ? 'text-muted-foreground line-through' : ''}`}>
+                  <div className={`font-semibold ${player.isOut ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
                     {player.name}
                   </div>
                   {player.isOut && (
-                    <div className="text-xs text-destructive">OUT</div>
+                    <div className="text-xs text-destructive font-medium flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-destructive rounded-full"></div>
+                      OUT
+                    </div>
                   )}
                 </div>
               </div>

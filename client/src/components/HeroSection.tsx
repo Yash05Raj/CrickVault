@@ -20,30 +20,45 @@ export default function HeroSection({ onRefresh, isRefreshing = false }: HeroSec
       style={{ backgroundImage: `url(${heroImage})` }}
       data-testid="hero-section"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-emerald-900/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
       
       <div className="relative h-full flex flex-col justify-center items-center text-center text-white p-8">
-        <Badge className="mb-4 bg-cricket-live text-white animate-pulse">
-          LIVE NOW
-        </Badge>
+        <div className="mb-6 relative">
+          <Badge className="bg-gradient-to-r from-cricket-live to-red-600 text-white animate-pulse shadow-lg px-4 py-2 text-sm font-semibold">
+            <div className="w-2 h-2 bg-white rounded-full animate-ping mr-2"></div>
+            LIVE NOW
+          </Badge>
+        </div>
         
-        <h1 className="text-4xl md:text-6xl font-bold font-[Poppins] mb-4">
-          Crick-Vault
+        <h1 className="text-5xl md:text-7xl font-bold font-[Poppins] mb-6 bg-gradient-to-r from-white via-cricket-gold to-cricket-green bg-clip-text text-transparent drop-shadow-lg">
+          CrickVault
         </h1>
         
-        <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-2xl">
-          Real-time cricket scores and match updates at your fingertips
+        <p className="text-xl md:text-2xl mb-10 text-white/95 max-w-3xl leading-relaxed">
+          Experience live cricket like never before with real-time scores, instant updates, and comprehensive match analytics
         </p>
         
-        <Button 
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-          className="bg-cricket-green hover:bg-cricket-green/90 text-white px-8 py-3 text-lg"
-          data-testid="button-refresh"
-        >
-          <RefreshCw className={`w-5 h-5 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-          {isRefreshing ? 'Refreshing...' : 'Refresh Scores'}
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button 
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            size="lg"
+            className="bg-gradient-to-r from-cricket-green to-emerald-600 hover:from-cricket-green/90 hover:to-emerald-600/90 text-white px-10 py-4 text-lg shadow-2xl hover:shadow-cricket-green/25 transition-all duration-300 transform hover:scale-105"
+            data-testid="button-refresh"
+          >
+            <RefreshCw className={`w-6 h-6 mr-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Get Live Scores'}
+          </Button>
+          <Button 
+            variant="outline"
+            size="lg"
+            className="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-10 py-4 text-lg"
+            data-testid="button-explore"
+          >
+            Explore Matches
+          </Button>
+        </div>
       </div>
     </div>
   );

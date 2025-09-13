@@ -82,12 +82,15 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b bg-gradient-to-r from-card/80 via-card/90 to-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/70 shadow-sm">
+        <div className="container mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold font-[Poppins] text-cricket-green">
-                Crick-Vault
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-cricket-green to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
+                <div className="w-3 h-3 bg-white rounded-sm"></div>
+              </div>
+              <h1 className="text-3xl font-bold font-[Poppins] bg-gradient-to-r from-cricket-green to-emerald-600 bg-clip-text text-transparent">
+                CrickVault
               </h1>
             </div>
             
